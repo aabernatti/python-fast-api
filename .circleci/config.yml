@@ -29,11 +29,11 @@ jobs:
       - image: cimg/python:3.11
     steps:
       - attach_workspace:
-          at: /workspace
+          at: .
       - run:
           name: Test server startup
           command: |
-            . /workspace/venv/bin/activate
+            . venv/bin/activate
             uvicorn app.main:app --host 127.0.0.1 --port 8003 &
             sleep 5
             curl -f http://127.0.0.1:8003/index
