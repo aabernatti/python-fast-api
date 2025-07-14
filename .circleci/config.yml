@@ -19,10 +19,21 @@ jobs:
             . venv/bin/activate
             pip install flake8
             flake8 app/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - venv
+
+  test:
+    docker:
+      - image: cimg/python:3.11
+    steps:
+      - attach_workspace:
+          at: /workspace
       - run:
           name: Test server startup
           command: |
-            . venv/bin/activate
+            . /workspace/venv/bin/activate
             uvicorn app.main:app --host 127.0.0.1 --port 8003 &
             sleep 5
             curl -f http://127.0.0.1:8003/index
@@ -31,4 +42,7 @@ workflows:
   version: 2
   build_and_test:
     jobs:
-      - build 
+      - build
+      - test:
+          requires:
+            - build
