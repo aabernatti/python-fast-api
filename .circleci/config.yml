@@ -20,19 +20,21 @@ jobs:
             pip install flake8
             flake8 app/
       - persist_to_workspace:
-          root: .
+          root: /home/circleci/project
           paths:
             - venv
+            - app  # Ensure the app directory is included
 
   test:
     docker:
       - image: cimg/python:3.11
     steps:
       - attach_workspace:
-          at: .
+          at: /home/circleci/project
       - run:
           name: Test server startup
           command: |
+            cd /home/circleci/project
             . venv/bin/activate
             uvicorn app.main:app --host 127.0.0.1 --port 8003 &
             sleep 5
